@@ -3,12 +3,25 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
+from .forms import PostForm
 from .models import User
 
 
 def index(request):
-    return render(request, "network/index.html")
+    form = PostForm(request.POST or None, request.FILES or None)
+    f = PostForm(request.POST, request.FILES)
+    if f.is_valid():
+        # save the form data to model
+        result = f.save(commit=False)
+        result.poster = request.user
+        result.save()
+        
+    if request.method == 'POST':
+        return HttpResponseRedirect(reverse("index"))
+
+    return render(request, "network/index.html", {
+        'form' :  form
+    })
 
 
 def login_view(request):

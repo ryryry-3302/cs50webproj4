@@ -1,5 +1,36 @@
 {% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
-    TODO
+<div class="container-lg">
+    <div class="row justify-content-end">
+        <div class="col-4">
+            <button id="createbtn" class="btn btn-dark m-2">Create Post</button>
+        </div>
+    </div>
+    <div id='postform'>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <h3 class="fw-bold text-center">Create Post</h3>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-6">
+                    <form method="POST" action={% url 'index' %} enctype="multipart/form-data" class="m-2">
+                        {{ form|crispy }}
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <input type="submit" class="btn btn-dark col-auto m-2"></input>
+                            <button id="backbtn" class="btn btn-dark m-2 col-auto">Go back</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
