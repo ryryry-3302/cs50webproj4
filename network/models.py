@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 class User(AbstractUser):
+    following = models.ManyToManyField("self", symmetrical=False, related_name="followers" )
     pass
 
 class Post(models.Model):
