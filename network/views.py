@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .forms import PostForm
-from .models import User
+from .models import User, Post
 
 
 def index(request):
@@ -74,3 +74,22 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def allposts(request):
+    form = PostForm(request.POST or None, request.FILES or None)
+    f = PostForm(request.POST, request.FILES)
+    if f.is_valid():
+        # save the form data to model
+        result = f.save(commit=False)
+        result.poster = request.user
+        result.save()
+        
+    if request.method == 'POST':
+        return HttpResponseRedirect(reverse("index"))
+
+    
+    posts = Post.objects.all()
+    return render(request, "network/index.html", {
+        "posts": posts,
+        "form" : form
+    })

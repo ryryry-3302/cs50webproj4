@@ -9,7 +9,7 @@ class Post(models.Model):
     title = models.CharField(max_length=20)
     body = models.TextField(max_length=400)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='network/static/network/photos',blank=True)
+    image = models.ImageField(upload_to='network/static/network/photos', blank=True)
     likers = models.ManyToManyField(User, blank=True, related_name="liked_posts")
 
     def __str__(self):
