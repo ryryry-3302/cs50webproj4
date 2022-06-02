@@ -1,0 +1,40 @@
+{% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+<div class="container-lg">
+    <div class="row justify-content-center">
+        <div class="col-sm-6 p-3 m-5 border rounded-5 border-3 bg-secondary bg-opacity-25">
+            <div class="row">
+                <h2 class="fw-bold">{{profile.username}}'s profile</h2>
+            </div>
+            <div class="row">
+                <h4 class="text-end">Following: {{profile.following.all|length}} Followers: {{profile.followers.all|length}}</h4>
+            </div>
+            {% if user.is_authenticated and user.username != profile.username %}
+            <div class="row justify-content-end">
+                <button id="followbtn" class="btn btn-dark w-25 m-2">Follow</button>
+            </div>
+            {% endif %}
+            
+            {% for post in posts%}
+            <div class="container-sm">
+                <div class="row justify-content-center p-2">
+                        <div class="row justify-content-center p-3 px-2 border bg-white rounded-5 border-3">
+                            <h3 class="tw-bold text-start">
+                                {{post.poster}}
+                            </h3>
+                            <img src="{{post.image.url}}" class="img-thumbnail p-0 m-0" alt="postphoto">
+                            <i class="bi bi-heart-fill fs-1 text-secondary"> {{post.likers.all|length }} Likes</i>
+                            <p class="tw-bold my-2">{{post.poster}}: {{post.title}}</p>
+                            <p>{{post.body}}</p>
+                            <p class="text-muted">Posted at {{post.post_time}}</p>
+                        </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

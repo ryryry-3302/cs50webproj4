@@ -93,3 +93,11 @@ def allposts(request):
         "posts": posts,
         "form" : form
     })
+
+def profile(request, prof_id):
+    profile = User.objects.get(pk=prof_id)
+
+    return render(request, "network/profile.html", {
+        "profile" : profile,
+        "posts" : Post.objects.filter(poster=profile).all(),
+    })
