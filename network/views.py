@@ -5,7 +5,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from .forms import PostForm
 from .models import User, Post
-
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     form = PostForm(request.POST or None, request.FILES or None)
@@ -88,7 +90,7 @@ def allposts(request):
         return HttpResponseRedirect(reverse("index"))
 
     
-    posts = Post.objects.all()
+    posts = Post.objects.order_by("-post_time").all()
     return render(request, "network/index.html", {
         "posts": posts,
         "form" : form
@@ -96,8 +98,28 @@ def allposts(request):
 
 def profile(request, prof_id):
     profile = User.objects.get(pk=prof_id)
+    me = False
+    if (profile.followers.filter(username=request.user.username).exists()):
+        me = True
 
     return render(request, "network/profile.html", {
         "profile" : profile,
-        "posts" : Post.objects.filter(poster=profile).all(),
+        "posts" : Post.objects.filter(poster=profile).order_by("-post_time").all(),
+        "me" : me
     })
+
+@login_required
+@csrf_exempt
+def follow(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        profile = data.get("prof_id")
+        follow = data.get("follow")
+        if follow:
+            request.user.following.add(User.objects.get(pk=profile))
+            return HttpResponse(status=204)
+        else:
+            request.user.following.remove(User.objects.get(pk=profile))
+            return HttpResponse(status=204)
+    if request.method == "GET":
+        return HttpResponse(status=400)

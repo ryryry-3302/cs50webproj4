@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-
+<div id="prof_id" class="display-none">{{profile.id}}</div>
 <div class="container-lg">
     <div class="row justify-content-center">
         <div class="col-sm-6 p-3 m-5 border rounded-5 border-3 bg-secondary bg-opacity-25">
@@ -10,11 +10,15 @@
                 <h2 class="fw-bold">{{profile.username}}'s profile</h2>
             </div>
             <div class="row">
-                <h4 class="text-end">Following: {{profile.following.all|length}} Followers: {{profile.followers.all|length}}</h4>
+                <h4 class="text-end col">Following: {{profile.following.all|length}}</h4> <h4 id="followers" class="col">Followers: {{profile.followers.all|length}}</h4>
             </div>
             {% if user.is_authenticated and user.username != profile.username %}
             <div class="row justify-content-end">
+                {% if me %}
+                <button id="followbtn" class="btn btn-dark w-25 m-2">Following</button>
+                {% else %}
                 <button id="followbtn" class="btn btn-dark w-25 m-2">Follow</button>
+                {% endif %}
             </div>
             {% endif %}
             

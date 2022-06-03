@@ -1,5 +1,9 @@
 /// if it doesnt update clear browser cached images :D
 document.addEventListener('DOMContentLoaded', () => {
+    function getIntPart(followers) {
+        followers = followers.replace('Followers: ', '');
+        return parseInt(followers);
+      }
     if (!(window.location.href.indexOf("profile") > -1)) {
 
     
@@ -20,8 +24,32 @@ document.addEventListener('DOMContentLoaded', () => {
     try{
         document.querySelector('#followbtn').addEventListener('click', function(){
             console.log('hi')
+            let followers = document.querySelector('#followers').innerHTML
+            console.log(followers)
+            followers = getIntPart(followers);
+            console.log(followers)
             if (this.innerHTML === 'Follow'){
                 this.innerHTML = 'Following';
+                document.querySelector('#followers').innerHTML = `Followers: ${followers+1}`
+                fetch('/follow', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        prof_id : parseInt(document.querySelector('#prof_id').innerHTML),
+                        follow : true,
+                    })
+                })
+            }
+
+            else if (this.innerHTML === 'Following'){
+                this.innerHTML = 'Follow';
+                document.querySelector('#followers').innerHTML = `Followers: ${followers-1}`
+                fetch('/follow', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        prof_id : parseInt(document.querySelector('#prof_id').innerHTML),
+                        follow :false,
+                    })
+                })
             }
         })
     }
