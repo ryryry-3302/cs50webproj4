@@ -57,5 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
     catch(TypeError){
         console.log('working as intended')
     }
+    
+    
 
 });
+
+function edit(clicked_id)
+  {
+    
+    console.log(clicked_id);
+  }

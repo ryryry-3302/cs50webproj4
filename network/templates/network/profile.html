@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-<div id="prof_id" class="display-none">{{profile.id}}</div>
+<div id="prof_id" class="d-none">{{profile.id}}</div>
 <div class="container-lg">
     <div class="row justify-content-center">
         <div class="col-sm-6 p-3 m-5 border rounded-5 border-3 bg-secondary bg-opacity-25">
@@ -29,6 +29,11 @@
                             <h3 class="tw-bold text-start">
                                 {{post.poster}}
                             </h3>
+                            {% if post.poster == request.user %}
+                            <div class="row justify-content-end">
+                                <button type="button" class='btn w-25 btn-dark'>Edit</button>
+                            </div>
+                            {% endif %}
                             <img src="{{post.image.url}}" class="img-thumbnail p-0 m-0" alt="postphoto">
                             <i class="bi bi-heart-fill fs-1 text-secondary"> {{post.likers.all|length }} Likes</i>
                             <p class="tw-bold my-2">{{post.poster}}: {{post.title}}</p>

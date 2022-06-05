@@ -1,8 +1,10 @@
 {% extends "network/layout.html" %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block body %}
 
+
+{% if user.is_authenticated %}
 <div class="container-lg">
     <div class="row justify-content-end">
         <div class="col-4">
@@ -34,6 +36,8 @@
         </div>
     </div>
 </div>
+{% endif %}
+<script src="{% static 'network/script.js' %}"></script>
 <div id='posts'>
     {% for post in posts %}
     <div class="container-sm">
@@ -45,6 +49,11 @@
                             {{post.poster}}
                         </h3>
                     </a>
+                    {% if post.poster == request.user %}
+                    <div class="row justify-content-end">
+                        <button type="button" id="button-{{post.id}}" onClick="edit(this.id)" class='edit-btn btn w-25 btn-dark'>Edit</button>
+                    </div>
+                    {% endif %}
                     <img src="{{post.image.url}}" class="img-thumbnail p-0 m-0" alt="postphoto">
                     <i class="bi bi-heart-fill fs-1 text-secondary"> {{post.likers.all|length }} Likes</i>
                     <p class="tw-bold my-2">{{post.poster}}: {{post.title}}</p>
@@ -55,6 +64,31 @@
         </div>
     </div>
     {% endfor %}
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if posts.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">{{ posts.previous_page_number }}</a></li>
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ posts.number }}</span>
+                    </li>
+                    
+                    {% endif %}
+                    
+                    {% if posts.has_next %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ posts.number }}</span>
+                    </li>
+                    <li class="page-item"><a class="page-link"href="?page={{ posts.next_page_number }}">{{ posts.next_page_number }}</a></li>
+                    
+                    <li class="page-item"><a class="page-link" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div
 
 {% endblock %}

@@ -8,6 +8,7 @@ from .models import User, Post
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 def index(request):
     form = PostForm(request.POST or None, request.FILES or None)
@@ -19,11 +20,9 @@ def index(request):
         result.save()
         
     if request.method == 'POST':
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("all_posts"))
 
-    return render(request, "network/index.html", {
-        'form' :  form
-    })
+    return HttpResponseRedirect(reverse("all_posts"))
 
 
 def login_view(request):
@@ -91,8 +90,12 @@ def allposts(request):
 
     
     posts = Post.objects.order_by("-post_time").all()
+    paged_posts = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paged_posts.get_page(page_number)
+
     return render(request, "network/index.html", {
-        "posts": posts,
+        "posts":page_obj,
         "form" : form
     })
 
@@ -123,3 +126,12 @@ def follow(request):
             return HttpResponse(status=204)
     if request.method == "GET":
         return HttpResponse(status=400)
+
+@login_required
+def following(request):
+    accounts = request.user.following.all()
+    print(accounts)
+    posts = Post.objects.filter(poster__in=accounts).all()
+    return render(request, 'network/index.html', {
+        'posts' : posts
+    })
