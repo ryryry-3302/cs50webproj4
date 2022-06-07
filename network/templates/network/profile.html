@@ -31,14 +31,15 @@
                             </h3>
                             {% if post.poster == request.user %}
                             <div class="row justify-content-end">
-                                <button type="button" class='btn w-25 btn-dark'>Edit</button>
+                                <button type="button" id="button-{{post.id}}" onClick="edit(this.id)" class='btn w-50 btn-dark'>Edit</button>
                             </div>
                             {% endif %}
                             <img src="{{post.image.url}}" class="img-thumbnail p-0 m-0" alt="postphoto">
                             <i class="bi bi-heart-fill fs-1 text-secondary"> {{post.likers.all|length }} Likes</i>
-                            <p class="tw-bold my-2">{{post.poster}}: {{post.title}}</p>
-                            <p>{{post.body}}</p>
-                            <p class="text-muted">Posted at {{post.post_time}}</p>
+                            <p id="title-{{post.id}}" class="tw-bold my-2">{{post.poster}}: {{post.title}}</p>
+                            <p id="body-{{post.id}}">{{post.body}}</p>
+                            <p id="time-{{post.id}}" class="text-muted">Posted at {{post.post_time}}</p>
+                            <input type="button" value="Change" class="submitbutton d-none btn btn-dark"></input>
                         </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 
 def index(request):
     form = PostForm(request.POST or None, request.FILES or None)
@@ -135,3 +136,27 @@ def following(request):
     return render(request, 'network/index.html', {
         'posts' : posts
     })
+
+
+@login_required
+@csrf_exempt
+def post(request, post_id):
+    try:
+        post = Post.objects.get(poster=request.user, pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Email not found."}, status=404)
+    
+    if request.method == "GET":
+        return JsonResponse(post.serialize())
+    elif request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("title") is not None:
+            post.title = data["title"]
+        if data.get("body") is not None:
+            post.body = data["body"]
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)

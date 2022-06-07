@@ -22,3 +22,14 @@ class Post(models.Model):
         
         self.post_time = timezone.now()
         return super(Post, self).save(*args, **kwargs)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "poster": self.poster.username,
+            
+            "liker": [liker.username for liker in self.likers.all()],
+            "post_time": self.post_time.strftime("%Y-%m-%d%H:%M:%S")
+        }

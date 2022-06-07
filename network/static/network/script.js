@@ -64,6 +64,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function edit(clicked_id)
   {
-    
-    console.log(clicked_id);
+    ///gets id from button clicked
+    if (document.querySelector(`#${clicked_id}`).innerHTML == 'Edit'){
+        let buttonid = clicked_id;
+        let button = document.querySelector(`#${clicked_id}`);
+        button.innerHTML = 'Cancel'
+        
+        clicked_id = clicked_id.replace('button-','');
+        let id = parseInt(clicked_id)
+        
+        ///selects original title
+        let originalTitle = document.querySelector(`#title-${id}`);
+        let originalBody = document.querySelector(`#body-${id}`);
+        let divToChange = originalTitle.parentNode
+        let old = divToChange.innerHTML;
+        /// creates element to replace original title
+
+        let newTitle = document.createElement('TEXTAREA');
+        newTitle.setAttribute('id', `title-text-new-${id}`);
+        let poster = originalTitle.innerHTML.split(':')[0];
+        originalTitle.innerHTML = originalTitle.innerHTML.replace(/.*:/,'').replace(' ','');
+        newTitle.innerHTML = originalTitle.innerHTML;
+        console.log(poster);
+        let newBody = document.createElement('TEXTAREA');
+        newBody.setAttribute('id', `body-text-new-${id}`);
+        newBody.innerHTML = originalBody.innerHTML;
+        
+        divToChange.replaceChild(newTitle, originalTitle);
+        divToChange.replaceChild(newBody, originalBody);
+        divToChange.querySelector('.submitbutton').classList.remove("d-none")
+        divToChange.querySelector('.submitbutton').addEventListener('click', ()=>{
+            
+        let newtitle = document.getElementById(`title-text-new-${id}`).value
+        let newbody = document.getElementById(`body-text-new-${id}`).value
+        fetch(`/post/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                'title': newtitle,
+                'body' : newbody
+            })
+            })
+       
+        divToChange.innerHTML = old;
+        document.querySelector(`#${buttonid}`).innerHTML = 'Edit';
+        console.log(`${poster}: ${newtitle}`);
+        document.querySelector(`#title-${id}`).innerHTML = `${poster}: ${newtitle}`;
+        document.querySelector(`#body-${id}`).innerHTML = `${newbody}`;
+        })
+
+        button.addEventListener('click', ()=>{
+            if (button.innerHTML === 'Cancel'){
+            divToChange.innerHTML = old;
+            document.querySelector(`#${buttonid}`).innerHTML = 'Edit';
+            }
+        })
+        
+    }
   }
+
