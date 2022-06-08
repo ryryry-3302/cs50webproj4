@@ -144,7 +144,7 @@ def post(request, post_id):
     try:
         post = Post.objects.get(poster=request.user, pk=post_id)
     except Post.DoesNotExist:
-        return JsonResponse({"error": "Email not found."}, status=404)
+        return JsonResponse({"error": "Post not found."}, status=404)
     
     if request.method == "GET":
         return JsonResponse(post.serialize())
@@ -154,6 +154,30 @@ def post(request, post_id):
             post.title = data["title"]
         if data.get("body") is not None:
             post.body = data["body"]
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+
+
+@login_required
+@csrf_exempt
+def like(request, post_id):
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+    if request.method == "GET":
+        return JsonResponse(post.serialize())
+    elif request.method == "PUT":
+        data = json.loads(request.body)
+        if (Post.objects.filter(pk=post_id, likers=User.objects.get(username=request.user)).exists()):
+            post.likers.remove(User.objects.get(username=request.user))
+            
+        else:
+            post.likers.add(User.objects.get(username=request.user))
         post.save()
         return HttpResponse(status=204)
     else:
